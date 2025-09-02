@@ -4,6 +4,29 @@
 @inject NavigationManager NavigationManager
 <RadzenComponents @rendermode="InteractiveServer" />
 
+<AuthorizeView>
+    <Authorized>
+        <RadzenPanelMenuItem Text="Home" Icon="home" Path="" />
+        <RadzenPanelMenuItem Text="Devices" Icon="device_hub">
+            <RadzenPanelMenuItem Text="MOUSE2" Icon="device_thermostat" Path="counter" />
+            <RadzenPanelMenuItem Text="MOUSE2B" Icon="device_thermostat" Path="counter" />
+            <RadzenPanelMenuItem Text="MOUSECOMBO" Icon="device_thermostat" Path="weather" />
+            <RadzenPanelMenuItem Text="MAS2" Icon="device_thermostat" Path="weather" />
+        </RadzenPanelMenuItem>
+        <RadzenPanelMenuItem Text="User Account" Icon="person" Path="Account/Manage" />
+        <RadzenStack Style="margin-top:25px" Orientation="Orientation.Vertical" AlignItems="AlignItems.Center">
+            <form action="Account/Logout" method="post">
+                <AntiforgeryToken />
+                <input type="hidden" name="ReturnUrl" value=@(NavigationManager.ToBaseRelativePath(NavigationManager.Uri)) />
+                <RadzenButton ButtonStyle="ButtonStyle.Secondary" type="submit">Logout</RadzenButton>
+            </form>
+        </RadzenStack>
+    </Authorized>
+    <NotAuthorized>
+        <RadzenPanelMenuItem Text="Login" Icon="home" Path="Account/Login" />
+    </NotAuthorized>
+</AuthorizeView>
+<!--
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">Server</a>
@@ -70,7 +93,7 @@
         </AuthorizeView>
     </nav>
 </div>
-
+-->
 @code {
     private string? currentUrl;
 

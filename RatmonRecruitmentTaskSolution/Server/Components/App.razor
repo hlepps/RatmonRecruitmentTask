@@ -16,7 +16,14 @@
 </head>
 
 <body>
-    <Routes @rendermode="RenderModeForPage" />
+    @if (HttpContext.Request.Path.StartsWithSegments("/Account"))
+    {
+        <Routes @rendermode="RenderModeForPage" />
+    }
+    else
+    {
+        <Routes @rendermode="InteractiveServer" />
+    }
     <script src="_framework/blazor.web.js"></script>
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
 </body>

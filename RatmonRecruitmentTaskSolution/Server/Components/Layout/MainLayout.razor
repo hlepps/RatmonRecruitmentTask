@@ -2,27 +2,49 @@
 @inherits LayoutComponentBase
 <RadzenComponents @rendermode="InteractiveServer" />
 
+@inject NavigationManager NavigationManager
+@inject CookieThemeService CookieThemeService
 
 
 
 <RadzenLayout>
     <RadzenHeader>
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
-            <RadzenSidebarToggle Click="@(() => {sidebarExpanded = !sidebarExpanded; Trace.WriteLine(sidebarExpanded); StateHasChanged();})" />
-            <RadzenLabel Text="Ratmon Recruitment Task - Piotr Pomagalski" />
-        </RadzenStack>
+        <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="10">
+                <RadzenStack AlignItems="AlignItems.Center" Orientation="Orientation.Horizontal">
+                    @if (!IsAccountRoute)
+                    {
+                        <RadzenSidebarToggle Click="@(() => { sidebarExpanded = !sidebarExpanded; Trace.WriteLine(sidebarExpanded); StateHasChanged(); })" />
+                    }
+                    else
+                    {
+                        <form action="/" style="margin-top:5px; margin-left:5px">
+                            <RadzenButton ButtonStyle="ButtonStyle.Primary" type="submit">Home</RadzenButton>
+                        </form>
+                    }
+                    <RadzenLabel Style=@(IsAccountRoute ? "margin-top: 10px; margin-left: 10px" : "") Text="Ratmon Recruitment Task - Piotr Pomagalski" />
+
+                </RadzenStack>
+            </RadzenColumn>
+            <RadzenColumn Size="2">
+                <RadzenStack AlignItems="AlignItems.End" Orientation="Orientation.Vertical">
+                    @if (!IsAccountRoute)
+                    {
+                        <RadzenAppearanceToggle class="rz-mr-5" />
+                    }
+                </RadzenStack>
+            </RadzenColumn>
+        </RadzenRow>
     </RadzenHeader>
-    <RadzenSidebar Responsive="true" Style="width: max-content">
-        <RadzenPanelMenu DisplayStyle="@(sidebarExpanded? MenuItemDisplayStyle.IconAndText: MenuItemDisplayStyle.Icon)" ShowArrow="false">
-            <RadzenPanelMenuItem Text="Overview" Icon="home" />
-            <RadzenPanelMenuItem Text="Dashboard" Icon="dashboard" />
-            <RadzenPanelMenuItem Text="UI Fundamentals" Icon="auto_awesome">
-                <RadzenPanelMenuItem Text="Themes" Icon="color_lens" />
-                <RadzenPanelMenuItem Text="Colors" Icon="invert_colors" />
-            </RadzenPanelMenuItem>
-            <NavMenu/>
-        </RadzenPanelMenu>
-    </RadzenSidebar>
+    @if (!IsAccountRoute)
+    {
+        <RadzenSidebar Responsive="false" Style="width: max-content">
+            <RadzenPanelMenu DisplayStyle="@(sidebarExpanded? MenuItemDisplayStyle.IconAndText: MenuItemDisplayStyle.Icon)" ShowArrow="false">
+
+                <NavMenu />
+            </RadzenPanelMenu>
+        </RadzenSidebar>
+    }
     <RadzenBody>
         @Body
     </RadzenBody>

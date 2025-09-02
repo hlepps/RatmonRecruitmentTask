@@ -31,8 +31,11 @@ namespace Server
                 .AddIdentityCookies();
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+            
+            builder.Services.AddDbContextPool<ApplicationDbContext>(opt =>
+                opt.UseNpgsql(connectionString));
+
+
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -43,6 +46,12 @@ namespace Server
             builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
             builder.Services.AddRadzenComponents();
+
+            builder.Services.AddRadzenCookieThemeService(options =>
+            {
+                options.Name = "ThemeService"; // The name of the cookie
+                options.Duration = TimeSpan.FromDays(365); // The duration of the cookie
+            });
 
             var app = builder.Build();
 
