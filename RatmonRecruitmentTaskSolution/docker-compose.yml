@@ -1,6 +1,45 @@
+version: '3.8'
+
 services:
   server:
-    image: ${DOCKER_REGISTRY-}server
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=3000
+      - ASPNETCORE_HTTPS_PORTS=3001
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=zaq1@WSX
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/devcert.pfx
+    container_name: rrt.server
+    volumes:
+      - ./dev_https:/https:ro
+    ports:
+      - "3000:3000"
+      - "3001:3001"
     build:
       context: .
       dockerfile: Server/Dockerfile
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rrt.rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=zaq1@WSX
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  postgres:
+    image: postgres:latest
+    container_name: rrt.postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=zaq1@WSX
+      - POSTGRES_DB=main
+    ports:
+      - "5432:5432"
+    volumes:
+     - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data: 
