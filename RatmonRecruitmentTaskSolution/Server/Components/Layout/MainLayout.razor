@@ -1,0 +1,36 @@
+﻿@using System.Diagnostics
+@inherits LayoutComponentBase
+<RadzenComponents @rendermode="InteractiveServer" />
+
+
+
+
+<RadzenLayout>
+    <RadzenHeader>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+            <RadzenSidebarToggle Click="@(() => {sidebarExpanded = !sidebarExpanded; Trace.WriteLine(sidebarExpanded); StateHasChanged();})" />
+            <RadzenLabel Text="Ratmon Recruitment Task - Piotr Pomagalski" />
+        </RadzenStack>
+    </RadzenHeader>
+    <RadzenSidebar Responsive="true" Style="width: max-content">
+        <RadzenPanelMenu DisplayStyle="@(sidebarExpanded? MenuItemDisplayStyle.IconAndText: MenuItemDisplayStyle.Icon)" ShowArrow="false">
+            <RadzenPanelMenuItem Text="Overview" Icon="home" />
+            <RadzenPanelMenuItem Text="Dashboard" Icon="dashboard" />
+            <RadzenPanelMenuItem Text="UI Fundamentals" Icon="auto_awesome">
+                <RadzenPanelMenuItem Text="Themes" Icon="color_lens" />
+                <RadzenPanelMenuItem Text="Colors" Icon="invert_colors" />
+            </RadzenPanelMenuItem>
+            <NavMenu/>
+        </RadzenPanelMenu>
+    </RadzenSidebar>
+    <RadzenBody>
+        @Body
+    </RadzenBody>
+</RadzenLayout>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>
+
