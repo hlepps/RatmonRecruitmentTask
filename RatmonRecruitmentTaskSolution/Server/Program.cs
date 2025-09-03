@@ -22,6 +22,7 @@ namespace Server
             builder.Services.AddScoped<IdentityUserAccessor>();
             builder.Services.AddScoped<IdentityRedirectManager>();
             builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+            builder.Services.AddHostedService<Services.RabbitMQConsumerService>();
 
             builder.Services.AddAuthentication(options =>
                 {
