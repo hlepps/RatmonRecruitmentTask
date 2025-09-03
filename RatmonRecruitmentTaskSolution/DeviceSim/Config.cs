@@ -6,8 +6,8 @@ namespace DeviceBase
 {
     public abstract class Config
     {
-        public string UniqueId { get; set; }
-        public string Name { get; set; }
+        public string UniqueId { get; set; } = "";
+        public string Name { get; set; } = "";
     }
 
     public class Config_MOUSE2 : Config

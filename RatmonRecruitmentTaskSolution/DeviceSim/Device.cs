@@ -14,10 +14,8 @@ namespace DeviceBase
     }
     public class Device
     {
-        public string DeviceType { get; set; }
         public Config Config { get; set; }
-
-        DeviceType deviceType;
+        public DeviceType deviceType { get; private set; }
 
         public Device(DeviceType deviceType)
         {
@@ -66,7 +64,9 @@ namespace DeviceBase
             data.Voltage = new Normal(5, 3).Sample();
             data.Resistance = new Normal(0.5, 0.25).Sample();
 
-            return JsonSerializer.Serialize(data, new JsonSerializerOptions { NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals });
+            var message = new { Sender = Config.UniqueId, Name = Config.Name, Timestamp = DateTime.Now, Data = data };
+
+            return JsonSerializer.Serialize(message, new JsonSerializerOptions { NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals });
         }
         private string generateMOUSE2BData()
         {
@@ -76,7 +76,9 @@ namespace DeviceBase
             data.Resistance = new Normal(0.5, 0.25).Sample();
             data.LeakLocation = new Random().NextDouble();
 
-            return JsonSerializer.Serialize(data, new JsonSerializerOptions { NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals });
+            var message = new { Sender = Config.UniqueId, Name = Config.Name, Timestamp = DateTime.Now, Data = data };
+
+            return JsonSerializer.Serialize(message, new JsonSerializerOptions { NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals });
         }
         private string generateMOUSECOMBOData()
         {
@@ -98,7 +100,9 @@ namespace DeviceBase
                 data.Reflectograms.Add(reflectogram);
             }
 
-            return JsonSerializer.Serialize(data, new JsonSerializerOptions { NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals });
+            var message = new { Sender = Config.UniqueId, Name = Config.Name, Timestamp = DateTime.Now, Data = data };
+
+            return JsonSerializer.Serialize(message, new JsonSerializerOptions { NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals });
         }
         private string generateMAS2Data()
         {
@@ -107,7 +111,9 @@ namespace DeviceBase
             data.Humidity = Math.Clamp(new Normal(50, 5).Sample(), 0, 100);
             data.Temperature = new Normal(20, 5).Sample();
 
-            return JsonSerializer.Serialize(data, new JsonSerializerOptions { NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals });
+            var message = new { Sender = Config.UniqueId, Name = Config.Name, Timestamp = DateTime.Now, Data = data };
+
+            return JsonSerializer.Serialize(message, new JsonSerializerOptions { NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals });
         }
     }
 }

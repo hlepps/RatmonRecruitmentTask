@@ -2,6 +2,7 @@
 using RabbitMQ.Client.Events;
 using System.Diagnostics;
 using System.Text;
+using System.Text.Json;
 
 namespace Server.Services
 {
@@ -24,28 +25,36 @@ namespace Server.Services
             using var connection = await factory.CreateConnectionAsync();
             using var channel = await connection.CreateChannelAsync();
 
-            await channel.ExchangeDeclareAsync(exchange: "dataExchange",
-                type: ExchangeType.Direct, durable: true, autoDelete: false);
-
-            // declare a server-named queue
-            QueueDeclareOk queueDeclareResult = await channel.QueueDeclareAsync();
-            
-            string queueName = queueDeclareResult.QueueName;
-            await channel.QueueBindAsync(queue: queueName, exchange: "dataExchange", routingKey: string.Empty);
+            await channel.QueueDeclareAsync(queue: "deviceDataQueue", durable: true, exclusive: false, autoDelete: false,
+                arguments: null);
 
             Trace.WriteLine(" [*] Waiting for logs.");
 
             var consumer = new AsyncEventingBasicConsumer(channel);
-            consumer.ReceivedAsync += (sender, ea) =>
+            consumer.ReceivedAsync += async (model, ea) =>
             {
-                
+
                 byte[] body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                Console.WriteLine($" [{sender}] {message}");
-                return Task.CompletedTask;
+
+                var deserialized = JsonSerializer.Deserialize <(string Id, string Name, object Data)>(message);
+                var parsed = JsonDocument.Parse(message).RootElement;
+
+                var senderID = parsed.GetProperty("Sender").GetString();
+                var senderName = parsed.GetProperty("Name").GetString();
+                var timestamp = parsed.GetProperty("Timestamp").GetString();
+                var data = parsed.GetProperty("Data").GetRawText();
+
+                var test1 = JsonSerializer.Deserialize<Shared.DeviceData_MOUSE2>(data);
+                var test2 = JsonSerializer.Deserialize<Shared.DeviceData_MOUSE2B>(data);
+                var test3 = JsonSerializer.Deserialize<Shared.DeviceData_MOUSECOMBO>(data);
+                var test4 = JsonSerializer.Deserialize<Shared.DeviceData_MAS2>(data);
+
+                Console.WriteLine($"[{timestamp}] ({senderName}({senderID})) {data}");
+                await channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
             };
 
-            await channel.BasicConsumeAsync(queueName, autoAck: true, consumer: consumer);
+            await channel.BasicConsumeAsync("deviceDataQueue", autoAck: false, consumer: consumer);
 
             Console.WriteLine(" Press [enter] to exit.");
             Console.ReadLine();

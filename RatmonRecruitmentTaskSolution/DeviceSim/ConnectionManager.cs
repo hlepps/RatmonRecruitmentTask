@@ -37,19 +37,23 @@ namespace DeviceBase
             using var connection = await factory.CreateConnectionAsync();
             using var channel = await connection.CreateChannelAsync();
 
-            await channel.ExchangeDeclareAsync(exchange: "dataExchange", type: ExchangeType.Fanout, durable:true, autoDelete: false);
-
+            await channel.QueueDeclareAsync(queue: "deviceDataQueue", durable: true, exclusive: false, autoDelete: false,
+                arguments: null);
 
             while (true)
             {
                 var message = device.GetDataMessage();
                 var body = Encoding.UTF8.GetBytes(message);
+                var properties = new BasicProperties
+                {
+                    Persistent = true
+                };
 
                 await channel.BasicPublishAsync(
-                    exchange: "dataExchange",
-                    routingKey: "data",
+                    exchange: string.Empty,
+                    routingKey: "deviceDataQueue",
                     mandatory: true,
-                    basicProperties: new BasicProperties { Persistent = true, Expiration = "60000", ContentType="application/json"},
+                    basicProperties: properties,
                     body:body
                     );
 

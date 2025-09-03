@@ -38,6 +38,8 @@ namespace DeviceSim
                 dataFrequency = 5000;
 
             Device device = new Device(deviceType);
+            Console.WriteLine($"Device type: {deviceType.ToString()}");
+            ConfigManager configManager = new ConfigManager(device);
 
             ConnectionManager connection = new ConnectionManager(device);
             Task task = Task.Run(() => connection.StartTransmitting(dataFrequency));
