@@ -1,11 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36414.22 d17.14
+VisualStudioVersion = 17.14.36414.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{490ADE01-0EF2-470B-82BF-72EEB0916B49}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceSim", "DeviceSim\DeviceSim.csproj", "{2897A581-7075-9B6D-B783-366451AB7C9F}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Shared", "Shared\Shared.shproj", "{495FBEBD-432F-46C2-9037-385D63DEE55E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,11 +25,20 @@ Global
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2897A581-7075-9B6D-B783-366451AB7C9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2897A581-7075-9B6D-B783-366451AB7C9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2897A581-7075-9B6D-B783-366451AB7C9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2897A581-7075-9B6D-B783-366451AB7C9F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {70B6D901-DE65-4C45-838A-87CF89E85639}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Shared\Shared.projitems*{2897a581-7075-9b6d-b783-366451ab7c9f}*SharedItemsImports = 5
+		Shared\Shared.projitems*{490ade01-0ef2-470b-82bf-72eeb0916b49}*SharedItemsImports = 5
+		Shared\Shared.projitems*{495fbebd-432f-46c2-9037-385d63dee55e}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

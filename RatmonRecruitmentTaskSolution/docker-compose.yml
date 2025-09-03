@@ -18,6 +18,39 @@ services:
       context: .
       dockerfile: Server/Dockerfile
 
+  device-mouse2:
+    environment:
+      - DEVICE_TYPE=MOUSE2
+      - DATA_FREQUENCY=1000
+    container_name: rrt.Device.MOUSE2
+    build:
+      context: .
+      dockerfile: DeviceSim/Dockerfile
+  device-mouse2b:
+    environment:
+      - DEVICE_TYPE=MOUSE2B
+      - DATA_FREQUENCY=6000
+    container_name: rrt.Device.MOUSE2B
+    build:
+      context: .
+      dockerfile: DeviceSim/Dockerfile
+  device-mousecombo:
+    environment:
+      - DEVICE_TYPE=MOUSECOMBO
+      - DATA_FREQUENCY=10000
+    container_name: rrt.Device.MOUSECOMBO
+    build:
+      context: .
+      dockerfile: DeviceSim/Dockerfile
+  device-mas2:
+    environment:
+      - DEVICE_TYPE=MAS2
+      - DATA_FREQUENCY=7000
+    container_name: rrt.Device.MAS2
+    build:
+      context: .
+      dockerfile: DeviceSim/Dockerfile
+
   rabbitmq:
     image: rabbitmq:management
     container_name: rrt.rabbitmq
