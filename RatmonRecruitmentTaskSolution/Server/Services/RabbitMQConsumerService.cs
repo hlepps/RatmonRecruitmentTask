@@ -1,5 +1,6 @@
 ﻿using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using Shared;
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
@@ -45,19 +46,14 @@ namespace Server.Services
                 var timestamp = parsed.GetProperty("Timestamp").GetString();
                 var data = parsed.GetProperty("Data").GetRawText();
 
-                var test1 = JsonSerializer.Deserialize<Shared.DeviceData_MOUSE2>(data);
-                var test2 = JsonSerializer.Deserialize<Shared.DeviceData_MOUSE2B>(data);
-                var test3 = JsonSerializer.Deserialize<Shared.DeviceData_MOUSECOMBO>(data);
-                var test4 = JsonSerializer.Deserialize<Shared.DeviceData_MAS2>(data);
+                IDeviceData parsedData = DeviceDataParser.ParseJSON(data);
 
-                Console.WriteLine($"[{timestamp}] ({senderName}({senderID})) {data}");
+                //Console.WriteLine($"[{timestamp}] ({senderName}({senderID})) {parsedData}");
                 await channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
             };
 
             await channel.BasicConsumeAsync("deviceDataQueue", autoAck: false, consumer: consumer);
 
-            Console.WriteLine(" Press [enter] to exit.");
-            Console.ReadLine();
         }
     }
 }

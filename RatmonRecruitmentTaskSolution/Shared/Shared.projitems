@@ -9,7 +9,8 @@
     <Import_RootNamespace>Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)DeviceData.cs" />
+    <Compile Include="..\Shared\IDeviceData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DeviceDataParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Reflectogram.cs" />
   </ItemGroup>
 </Project>
