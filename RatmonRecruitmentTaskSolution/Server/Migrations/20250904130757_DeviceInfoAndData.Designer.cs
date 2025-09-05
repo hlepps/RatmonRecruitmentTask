@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Server.Data;
@@ -11,9 +12,11 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250904130757_DeviceInfoAndData")]
+    partial class DeviceInfoAndData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -250,6 +253,11 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("DeviceType")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("character varying(13)");
+
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("timestamp with time zone");
 
@@ -258,6 +266,8 @@ namespace Server.Migrations
                     b.HasIndex("DataId");
 
                     b.ToTable("DeviceData");
+
+                    b.HasDiscriminator<string>("DeviceType").HasValue("DeviceData");
                 });
 
             modelBuilder.Entity("Shared.DeviceDataBase", b =>
@@ -268,95 +278,9 @@ namespace Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("DeviceType")
-                        .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("character varying(21)");
-
                     b.HasKey("Id");
 
                     b.ToTable("DeviceDataBase");
-
-                    b.HasDiscriminator<string>("DeviceType").HasValue("DeviceDataBase");
-
-                    b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("Shared.DeviceData_MAS2", b =>
-                {
-                    b.HasBaseType("Shared.DeviceDataBase");
-
-                    b.Property<double>("Humidity")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("Temperature")
-                        .HasColumnType("double precision");
-
-                    b.HasDiscriminator().HasValue("MAS2");
-                });
-
-            modelBuilder.Entity("Shared.DeviceData_MOUSE2", b =>
-                {
-                    b.HasBaseType("Shared.DeviceDataBase");
-
-                    b.Property<double>("Resistance")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("Voltage")
-                        .HasColumnType("double precision");
-
-                    b.HasDiscriminator().HasValue("MOUSE2");
-                });
-
-            modelBuilder.Entity("Shared.DeviceData_MOUSE2B", b =>
-                {
-                    b.HasBaseType("Shared.DeviceDataBase");
-
-                    b.Property<double>("LeakLocation")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("Resistance")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("Voltage")
-                        .HasColumnType("double precision");
-
-                    b.ToTable("DeviceDataBase", t =>
-                        {
-                            t.Property("Resistance")
-                                .HasColumnName("DeviceData_MOUSE2B_Resistance");
-
-                            t.Property("Voltage")
-                                .HasColumnName("DeviceData_MOUSE2B_Voltage");
-                        });
-
-                    b.HasDiscriminator().HasValue("MOUSE2B");
-                });
-
-            modelBuilder.Entity("Shared.DeviceData_MOUSECOMBO", b =>
-                {
-                    b.HasBaseType("Shared.DeviceDataBase");
-
-                    b.Property<string>("Reflectograms")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<double>("Resistance")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("Voltage")
-                        .HasColumnType("double precision");
-
-                    b.ToTable("DeviceDataBase", t =>
-                        {
-                            t.Property("Resistance")
-                                .HasColumnName("DeviceData_MOUSECOMBO_Resistance");
-
-                            t.Property("Voltage")
-                                .HasColumnName("DeviceData_MOUSECOMBO_Voltage");
-                        });
-
-                    b.HasDiscriminator().HasValue("MOUSECOMBO");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

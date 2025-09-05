@@ -1,20 +1,22 @@
-﻿@implements IDisposable
+﻿@using Server.Services
+@implements IDisposable
 @rendermode InteractiveServer
 
 @inject NavigationManager NavigationManager
+@inject DeviceService DeviceService
 <RadzenComponents @rendermode="InteractiveServer" />
 
 <AuthorizeView>
     <Authorized>
         <RadzenPanelMenuItem Text="Home" Icon="home" Path="" />
         <RadzenPanelMenuItem Text="Devices" Icon="device_hub">
-            <RadzenPanelMenuItem Text="MOUSE2" Icon="device_thermostat" Path="counter" />
-            <RadzenPanelMenuItem Text="MOUSE2B" Icon="device_thermostat" Path="counter" />
-            <RadzenPanelMenuItem Text="MOUSECOMBO" Icon="device_thermostat" Path="weather" />
-            <RadzenPanelMenuItem Text="MAS2" Icon="device_thermostat" Path="weather" />
+            @foreach(var device in devices)
+            {
+                <RadzenPanelMenuItem Text="@(device.Name)" Icon="device_thermostat" Path="counter" />
+            }
         </RadzenPanelMenuItem>
         <RadzenPanelMenuItem Text="User Account" Icon="person" Path="Account/Manage" />
-        <RadzenStack Style="margin-top:25px" Orientation="Orientation.Vertical" AlignItems="AlignItems.Center">
+        <RadzenStack Style="margin-top:25px" Orientation="Radzen.Orientation.Vertical" AlignItems="AlignItems.Center">
             <form action="Account/Logout" method="post">
                 <AntiforgeryToken />
                 <input type="hidden" name="ReturnUrl" value=@(NavigationManager.ToBaseRelativePath(NavigationManager.Uri)) />
@@ -26,92 +28,4 @@
         <RadzenPanelMenuItem Text="Login" Icon="home" Path="Account/Login" />
     </NotAuthorized>
 </AuthorizeView>
-<!--
-<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Server</a>
-    </div>
-</div>
-
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
-
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="auth">
-                <span class="bi bi-lock-nav-menu" aria-hidden="true"></span> Auth Required
-            </NavLink>
-        </div>
-
-        <AuthorizeView>
-            <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Manage">
-                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> @context.User.Identity?.Name
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <form action="Account/Logout" method="post">
-                        <AntiforgeryToken />
-                        <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                        <button type="submit" class="nav-link">
-                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
-                        </button>
-                    </form>
-                </div>
-            </Authorized>
-            <NotAuthorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Register">
-                        <span class="bi bi-person-nav-menu" aria-hidden="true"></span> Register
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Login">
-                        <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Login
-                    </NavLink>
-                </div>
-            </NotAuthorized>
-        </AuthorizeView>
-    </nav>
-</div>
--->
-@code {
-    private string? currentUrl;
-
-    protected override void OnInitialized()
-    {
-        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-        NavigationManager.LocationChanged += OnLocationChanged;
-    }
-
-    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
-    {
-        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
-        StateHasChanged();
-    }
-
-    public void Dispose()
-    {
-        NavigationManager.LocationChanged -= OnLocationChanged;
-    }
-}
 

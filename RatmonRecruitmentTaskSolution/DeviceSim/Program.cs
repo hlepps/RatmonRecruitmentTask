@@ -1,6 +1,7 @@
 ﻿using RabbitMQ.Client;
 using Microsoft.Data.Sqlite;
 using DeviceBase;
+using Shared;
 
 namespace DeviceSim
 {

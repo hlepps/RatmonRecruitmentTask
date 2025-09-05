@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Shared
 {
-    public interface IDeviceData
+    /// <summary>
+    /// Base class for actual data from devices
+    /// </summary>
+    public class DeviceDataBase
     {
-
+        [JsonIgnore]
+        public int Id { get; set; }
     }
 
-    public class DeviceData_MOUSE2 : IDeviceData
+    public class DeviceData_MOUSE2 : DeviceDataBase
     {
         public double Voltage { get; set; }
         public double Resistance { get; set; }
@@ -19,7 +24,7 @@ namespace Shared
             return $"Voltage:{Voltage} Resistance:{Resistance}";
         }
     }
-    public class DeviceData_MOUSE2B : IDeviceData
+    public class DeviceData_MOUSE2B : DeviceDataBase
     {
         public double Voltage { get; set; }
         public double Resistance { get; set; }
@@ -29,7 +34,7 @@ namespace Shared
             return $"Voltage:{Voltage} Resistance:{Resistance} LeakLocation:{LeakLocation}";
         }
     }
-    public class DeviceData_MOUSECOMBO : IDeviceData
+    public class DeviceData_MOUSECOMBO : DeviceDataBase
     {
         public double Voltage { get; set; }
         public double Resistance { get; set; }
@@ -39,7 +44,7 @@ namespace Shared
             return $"Voltage:{Voltage} Resistance:{Resistance} List<Reflectogram>:{Reflectograms.Count}";
         }
     }
-    public class DeviceData_MAS2 : IDeviceData
+    public class DeviceData_MAS2 : DeviceDataBase
     {
         public double Temperature { get; set; }
         public double Humidity { get; set; }

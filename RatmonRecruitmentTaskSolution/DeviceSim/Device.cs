@@ -8,10 +8,7 @@ using System.Text.Json.Serialization;
 
 namespace DeviceBase
 {
-    public enum DeviceType
-    {
-        MOUSE2, MOUSE2B, MOUSECOMBO, MAS2
-    }
+
     public class Device
     {
         public Config Config { get; set; }
@@ -22,16 +19,16 @@ namespace DeviceBase
             this.deviceType = deviceType;
             switch(deviceType)
             {
-                case DeviceBase.DeviceType.MOUSE2:
+                case Shared.DeviceType.MOUSE2:
                     this.Config = new Config_MOUSE2();
                     break;
-                case DeviceBase.DeviceType.MOUSE2B:
+                case Shared.DeviceType.MOUSE2B:
                     this.Config = new Config_MOUSE2B();
                     break;
-                case DeviceBase.DeviceType.MOUSECOMBO:
+                case Shared.DeviceType.MOUSECOMBO:
                     this.Config = new Config_MOUSECOMBO();
                     break;
-                case DeviceBase.DeviceType.MAS2:
+                case Shared.DeviceType.MAS2:
                     this.Config = new Config_MAS2();
                     break;
             }
@@ -41,16 +38,16 @@ namespace DeviceBase
         {
             switch (deviceType)
             {
-                case DeviceBase.DeviceType.MOUSE2:
+                case Shared.DeviceType.MOUSE2:
                     return generateMOUSE2Data();
                     break;
-                case DeviceBase.DeviceType.MOUSE2B:
+                case Shared.DeviceType.MOUSE2B:
                     return generateMOUSE2BData();
                     break;
-                case DeviceBase.DeviceType.MOUSECOMBO:
+                case Shared.DeviceType.MOUSECOMBO:
                     return generateMOUSECOMBOData();
                     break;
-                case DeviceBase.DeviceType.MAS2:
+                case Shared.DeviceType.MAS2:
                     return generateMAS2Data();
                     break;
             }

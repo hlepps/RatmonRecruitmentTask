@@ -1,0 +1,72 @@
+﻿@using Server.Services
+@using Data.Models
+@using global::Shared
+
+@inject DeviceDataService DeviceDataService
+@inject DeviceService DeviceService
+@inject NavigationManager NavigationManager
+
+<RadzenRow class="rz-text-align-center rz-border-primary-light rz-background-color-base-dark" Gap="0" JustifyContent="JustifyContent.Center">
+    <RadzenColumn class="rz-p-5" Size="12" SizeLG="4">
+        <RadzenRow>
+            <RadzenColumn class="rz-p-5" Size="12">
+                <RadzenText TextStyle="TextStyle.DisplayH4">@(Device.Name) (@(Device.Type))</RadzenText>
+            </RadzenColumn>
+            <RadzenColumn class="rz-p-5" Size="12">
+                <RadzenText TextStyle="TextStyle.DisplayH5">
+                    Latest data from:
+                    @if (devicedata.Count == 0)
+                    {
+                        <RadzenSkeleton Animation="SkeletonAnimation.Wave" />
+                    }
+                    else
+                    {
+                        @(devicedata[0].Timestamp.ToString("U"))
+                    }
+
+                </RadzenText>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeLG="8">
+        <RadzenRow>
+            @switch (Device.Type)
+            {
+                case DeviceType.MOUSE2:
+                    <RadzenColumn class="rz-p-5" Size="12" SizeLG="6">
+                        <RadzenCard Style="max-height: 450px; ">
+                            @if (devicedata.Count == 0)
+                            {
+                                <RadzenSkeleton Animation="SkeletonAnimation.Wave" />
+                            }
+                            else
+                            {
+                                <ParameterGraph Device=@Device DataParameterName="Voltage" Label="V" ValueFormat="ValueFormat.Normal" />
+                            }
+                        </RadzenCard>
+                    </RadzenColumn>
+                    <RadzenColumn class="rz-p-5" Size="12" SizeLG="6">
+                        <RadzenCard Style="max-height: 450px; ">
+                            @if (devicedata.Count == 0)
+                            {
+                                <RadzenSkeleton Animation="SkeletonAnimation.Wave" />
+                            }
+                            else
+                            {
+                                <ParameterGraph Device=@Device DataParameterName="Resistance" Label="Ω" ValueFormat="ValueFormat.Normal" />
+                            }
+                        </RadzenCard>
+                    </RadzenColumn>
+                    break;
+                case DeviceType.MOUSE2B:
+                    break;
+                case DeviceType.MOUSECOMBO:
+
+                    break;
+                case DeviceType.MAS2:
+
+                    break;
+            }
+        </RadzenRow>
+    </RadzenColumn>
+</RadzenRow>

@@ -5,11 +5,19 @@ using Radzen;
 using Server.Components;
 using Server.Components.Account;
 using Server.Data;
+using Server.Hubs;
+using Server.Services;
+using System.Data.Common;
 
 namespace Server
 {
     public class Program
     {
+        public static bool IsRunningInContainer()
+        {
+            return File.Exists("/.dockerenv");
+        }
+
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +30,7 @@ namespace Server
             builder.Services.AddScoped<IdentityUserAccessor>();
             builder.Services.AddScoped<IdentityRedirectManager>();
             builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
-            builder.Services.AddHostedService<Services.RabbitMQConsumerService>();
+
 
             builder.Services.AddAuthentication(options =>
                 {
@@ -31,11 +39,23 @@ namespace Server
                 })
                 .AddIdentityCookies();
 
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-            
-            builder.Services.AddDbContextPool<ApplicationDbContext>(opt =>
-                opt.UseNpgsql(connectionString));
+            var connectionString = "";
+            if(Program.IsRunningInContainer())
+                connectionString = builder.Configuration.GetConnectionString("DockerConnection") ?? throw new InvalidOperationException("Connection string 'DockerConnection' not found.");
+            else
+                connectionString = builder.Configuration.GetConnectionString("DevelopmentConnection") ?? throw new InvalidOperationException("Connection string 'DevelopmentConnection' not found.");
 
+            builder.Services.Configure<HostOptions>(x =>
+            {
+                x.ServicesStartConcurrently = true;
+            });
+
+            //builder.Services.AddDbContextPool<ApplicationDbContext>(opt =>
+            //    opt.UseNpgsql(connectionString));
+            builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
+            {
+                options.UseNpgsql(connectionString);
+            });
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -53,6 +73,13 @@ namespace Server
                 options.Name = "ThemeService"; // The name of the cookie
                 options.Duration = TimeSpan.FromDays(365); // The duration of the cookie
             });
+
+            builder.Services.AddSingleton<DeviceService>();
+            builder.Services.AddSingleton<DeviceDataService>();
+            builder.Services.AddHostedService<Services.RabbitMQConsumerService>();
+
+            builder.Services.AddSignalR();
+
 
             var app = builder.Build();
 
@@ -78,6 +105,9 @@ namespace Server
 
             // Add additional endpoints required by the Identity /Account Razor components.
             app.MapAdditionalIdentityEndpoints();
+
+
+            app.MapHub<DataUpdateHub>("/dataupdate");
 
             app.Run();
         }

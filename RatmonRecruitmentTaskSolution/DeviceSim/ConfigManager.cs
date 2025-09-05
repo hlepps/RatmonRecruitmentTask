@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Shared;
 
 namespace DeviceBase
 {
@@ -29,16 +30,16 @@ namespace DeviceBase
                 {
                     switch (device.deviceType)
                     {
-                        case DeviceBase.DeviceType.MOUSE2:
+                        case Shared.DeviceType.MOUSE2:
                             device.Config = JsonSerializer.Deserialize<Config_MOUSE2>(json);
                             break;
-                        case DeviceBase.DeviceType.MOUSE2B:
+                        case Shared.DeviceType.MOUSE2B:
                             device.Config = JsonSerializer.Deserialize<Config_MOUSE2B>(json);
                             break;
-                        case DeviceBase.DeviceType.MOUSECOMBO:
+                        case Shared.DeviceType.MOUSECOMBO:
                             device.Config = JsonSerializer.Deserialize<Config_MOUSECOMBO>(json);
                             break;
-                        case DeviceBase.DeviceType.MAS2:
+                        case Shared.DeviceType.MAS2:
                             device.Config = JsonSerializer.Deserialize<Config_MAS2>(json);
                             break;
                     }

@@ -11,7 +11,7 @@
     <RadzenHeader>
         <RadzenRow AlignItems="AlignItems.Center">
             <RadzenColumn Size="10">
-                <RadzenStack AlignItems="AlignItems.Center" Orientation="Orientation.Horizontal">
+                <RadzenStack AlignItems="AlignItems.Center" Orientation="Radzen.Orientation.Horizontal">
                     @if (!IsAccountRoute)
                     {
                         <RadzenSidebarToggle Click="@(() => { sidebarExpanded = !sidebarExpanded; Trace.WriteLine(sidebarExpanded); StateHasChanged(); })" />
@@ -27,7 +27,7 @@
                 </RadzenStack>
             </RadzenColumn>
             <RadzenColumn Size="2">
-                <RadzenStack AlignItems="AlignItems.End" Orientation="Orientation.Vertical">
+                <RadzenStack AlignItems="AlignItems.End" Orientation="Radzen.Orientation.Vertical">
                     @if (!IsAccountRoute)
                     {
                         <RadzenAppearanceToggle class="rz-mr-5" />

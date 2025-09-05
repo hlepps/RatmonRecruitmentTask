@@ -1,0 +1,24 @@
+﻿@rendermode InteractiveServer
+@using Server.Services
+@using Data.Models
+@using global::Shared
+
+@inject DeviceDataService DeviceDataService
+@inject DeviceService DeviceService
+@inject NavigationManager NavigationManager
+
+<RadzenRow class="rz-p-0 rz-p-md-6 rz-p-lg-12" JustifyContent="JustifyContent.Center">
+    <RadzenChart Style="width:100%">
+        <RadzenChartTooltipOptions />
+        <RadzenLineSeries Smooth=false Data="@graphData" CategoryProperty="XValue" ValueProperty="YValue" Title=@DataParameterName>
+            <RadzenMarkers Visible=true MarkerType="MarkerType.Square" />
+            <RadzenSeriesDataLabels Visible=false />
+        </RadzenLineSeries>
+        <RadzenCategoryAxis Padding="20" Formatter="@FormatDateTime"/>
+        <RadzenValueAxis Formatter="@FormatValue">
+            <RadzenGridLines Visible="true" />
+            <RadzenAxisTitle Text=@Label/>
+        </RadzenValueAxis>
+        <RadzenLegend Visible="false" />
+    </RadzenChart>
+</RadzenRow>

@@ -46,7 +46,8 @@ namespace DeviceBase
                 var body = Encoding.UTF8.GetBytes(message);
                 var properties = new BasicProperties
                 {
-                    Persistent = true
+                    Persistent = true,
+                    
                 };
 
                 await channel.BasicPublishAsync(

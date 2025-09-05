@@ -1,9 +1,12 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.Authorization
+@using Server.Services
 
 @attribute [Authorize]
 
 @inject NavigationManager NavigationManager
+@inject DeviceService DeviceService
+@inject DeviceDataService deviceDataService
 
 <PageTitle>Home</PageTitle>
 
@@ -11,6 +14,12 @@
 
     Hello @context.User.Identity?.Name!
 
+    <RadzenStack Orientation="Radzen.Orientation.Vertical">
+        @foreach(var device in devices)
+        {
+            <Server.Components.Shared.DeviceLatestDataView Device="device"/>
+        }
+    </RadzenStack>
     
 
 </AuthorizeView>
