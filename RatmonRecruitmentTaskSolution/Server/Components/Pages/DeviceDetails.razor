@@ -1,0 +1,14 @@
+﻿@page "/device/{DeviceId}"
+@using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveServer
+
+@attribute [Authorize]
+
+<PageTitle>Device</PageTitle>
+
+<h1>Device</h1>
+
+@code {
+    [Parameter]
+    public string DeviceId { get; set; }
+}

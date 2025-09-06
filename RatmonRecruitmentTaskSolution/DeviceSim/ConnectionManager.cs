@@ -58,7 +58,7 @@ namespace DeviceBase
                     body:body
                     );
 
-                Console.WriteLine($"Sent: {message}");
+                //Console.WriteLine($"Sent: {message}");
                 Thread.Sleep(dataFrequency);
             }
         }

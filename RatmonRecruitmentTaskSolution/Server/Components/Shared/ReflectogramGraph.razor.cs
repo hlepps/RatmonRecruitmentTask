@@ -4,15 +4,18 @@ using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Server.Data.Models;
 using Server.Migrations;
+using System;
 using System.Globalization;
+using System.Net.WebSockets;
 using System.Reflection;
+using System.Text.Json;
 using static System.Net.WebRequestMethods;
 
 namespace Server.Components.Shared
 {
-    public class GraphData
+    public class ReflectogramGraphData
     {
-        public DateTime XValue { get; set; }
+        public int XValue { get; set; }
         public double YValue { get; set; }
 
         public override string ToString()
@@ -20,90 +23,50 @@ namespace Server.Components.Shared
             return $"X:{XValue.ToString("T")} Y:{YValue}";
         }
     }
-
-    public enum ValueFormat
-    {
-        Normal, Temperature, Percent
-    }
-
-    public partial class ParameterGraph
+    public partial class ReflectogramGraph
     {
         [Parameter]
         public Device Device { get; set; }
 
-        [Parameter]
-        public string DataParameterName { get; set; }
-
-        [Parameter]
-        public string Label { get; set; }
-
-        [Parameter]
-        public ValueFormat ValueFormat { get; set; }
-
         /// <summary>
-        /// How many latest entries to select
+        /// display N-th newest reflectogram
         /// </summary>
         [Parameter]
-        public int Latest { get; set; } = 10;
+        public int Number { get; set; }
 
         HubConnection? hubConnection;
 
-        List<GraphData> graphData = new List<GraphData>();
+        List<ReflectogramGraphData> graphData = new List<ReflectogramGraphData>();
         Type type;
 
-        string FormatDateTime(object value)
-        {
-            return ((DateTime)value).ToLocalTime().ToString("T");
-        }
 
         string FormatValue(object value)
         {
-            switch(ValueFormat)
-            {
-                case ValueFormat.Normal:
-                    return string.Format("{0:0.00}", ((double)value));
-                    break;
-                case ValueFormat.Temperature:
-                    return string.Format("{0:0.00°C}", ((double)value));
-                    break;
-                case ValueFormat.Percent:
-                    return string.Format("{0:0.00%}", ((double)value)/100.0);
-                    break;
-            }
             return string.Format("{0:0.00}", ((double)value));
 
         }
 
+        // quick fix to graph not updating data when there is the same amount of entries
+        bool syncCheck = false;
         async Task GetData()
         {
-            switch (Device.Type)
+            var devicedata = await DeviceDataService.GetLatestXDeviceDataAsync(Device.Id, Number+1);
+            if (devicedata.Count <= Number) return;
+            var reflectogramData = (devicedata[Number].Data as DeviceData_MOUSECOMBO).Reflectograms;
+
+            graphData.Clear();
+            int counter = 0;
+            foreach (var reflectogram in reflectogramData)
             {
-                case DeviceType.MOUSE2:
-                    type = typeof(DeviceData_MOUSE2);
-                    break;
-                case DeviceType.MOUSE2B:
-                    type = typeof(DeviceData_MOUSE2B);
-                    break;
-                case DeviceType.MOUSECOMBO:
-                    type = typeof(DeviceData_MOUSECOMBO);
-                    break;
-                case DeviceType.MAS2:
-                    type = typeof(DeviceData_MAS2);
-                    break;
-                default:
-                    type = typeof(DeviceData_MOUSE2);
-                    break;
-
+                var values = JsonSerializer.Deserialize<List<double>>(System.Text.Encoding.UTF8.GetString(reflectogram.Data));
+                foreach(var value in values)
+                {
+                    graphData.Add(new ReflectogramGraphData() { XValue = counter*20, YValue = value });
+                    counter++;
+                }
             }
-            var devicedata = await DeviceDataService.GetLatestXDeviceDataAsync(Device.Id, Latest);
-
-            if (graphData.Count > 100) graphData.Clear();
-
-            foreach (var single in devicedata)
-            {
-                graphData.Add(new GraphData() { XValue = single.Timestamp, YValue = (double)type.GetProperty(DataParameterName).GetValue(single.Data) });
-            }
-
+            if (syncCheck) graphData.Add(graphData[0]);
+            syncCheck = !syncCheck;
         }
 
         protected async override Task OnInitializedAsync()
@@ -145,7 +108,7 @@ namespace Server.Components.Shared
         {
             await base.OnAfterRenderAsync(firstRender);
         }
-        
+
 
     }
 }

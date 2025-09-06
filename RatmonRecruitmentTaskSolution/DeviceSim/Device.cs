@@ -91,7 +91,9 @@ namespace DeviceBase
                 List<double> values = new List<double>();
                 for (int y = 0; y < 20; y++)
                 {
-                    values.Add(new Normal(0, 0.1).Sample());
+                    var val = Math.Pow(new Normal(0, 0.1).Sample(), 5) * 500.0;
+                    if (val < 0) val /= 100.0;
+                    values.Add(val);
                 }
                 reflectogram.Data = JsonSerializer.SerializeToUtf8Bytes(values);
                 data.Reflectograms.Add(reflectogram);

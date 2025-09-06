@@ -30,7 +30,7 @@ services:
   device-mouse2b:
     environment:
       - DEVICE_TYPE=MOUSE2B
-      - DATA_FREQUENCY=11000
+      - DATA_FREQUENCY=10500
       - CONFIG_FILENAME=config2
     container_name: rrt.Device.MOUSE2B
     build:
@@ -39,7 +39,7 @@ services:
   device-mousecombo:
     environment:
       - DEVICE_TYPE=MOUSECOMBO
-      - DATA_FREQUENCY=12000
+      - DATA_FREQUENCY=11000
       - CONFIG_FILENAME=config3
     container_name: rrt.Device.MOUSECOMBO
     build:
@@ -48,7 +48,7 @@ services:
   device-mas2:
     environment:
       - DEVICE_TYPE=MAS2
-      - DATA_FREQUENCY=13000
+      - DATA_FREQUENCY=9500
       - CONFIG_FILENAME=config4
     container_name: rrt.Device.MAS2
     build:

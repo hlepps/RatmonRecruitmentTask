@@ -12,7 +12,7 @@
         <RadzenPanelMenuItem Text="Devices" Icon="device_hub">
             @foreach(var device in devices)
             {
-                <RadzenPanelMenuItem Text="@(device.Name)" Icon="device_thermostat" Path="counter" />
+                <RadzenPanelMenuItem Text="@(device.Name)" Icon="device_thermostat" Path="@($"/device/{device.Id}")" />
             }
         </RadzenPanelMenuItem>
         <RadzenPanelMenuItem Text="User Account" Icon="person" Path="Account/Manage" />

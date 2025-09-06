@@ -1,0 +1,33 @@
+﻿@using Server.Components.Shared
+@using Server.Data.Models
+
+<RadzenColumn class="rz-p-5" Size="12" SizeLG="6">
+    <RadzenCard Style="max-height: 450px; ">
+        @if (DeviceData.Count == 0)
+        {
+            <RadzenSkeleton Animation="SkeletonAnimation.Wave" />
+        }
+        else
+        {
+            <ParameterGraph Device=@Device DataParameterName="Temperature" Label="V" ValueFormat="ValueFormat.Temperature" />
+        }
+    </RadzenCard>
+</RadzenColumn>
+<RadzenColumn class="rz-p-5" Size="12" SizeLG="6">
+    <RadzenCard Style="max-height: 450px; ">
+        @if (DeviceData.Count == 0)
+        {
+            <RadzenSkeleton Animation="SkeletonAnimation.Wave" />
+        }
+        else
+        {
+            <ParameterGraph Device=@Device DataParameterName="Humidity" Label="Ω" ValueFormat="ValueFormat.Percent" />
+        }
+    </RadzenCard>
+</RadzenColumn>
+@code {
+    [Parameter]
+    public Device Device { get; set; }
+    [Parameter]
+    public List<DeviceData> DeviceData { get; set; }
+}

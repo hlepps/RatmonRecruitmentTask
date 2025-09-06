@@ -33,38 +33,16 @@
             @switch (Device.Type)
             {
                 case DeviceType.MOUSE2:
-                    <RadzenColumn class="rz-p-5" Size="12" SizeLG="6">
-                        <RadzenCard Style="max-height: 450px; ">
-                            @if (devicedata.Count == 0)
-                            {
-                                <RadzenSkeleton Animation="SkeletonAnimation.Wave" />
-                            }
-                            else
-                            {
-                                <ParameterGraph Device=@Device DataParameterName="Voltage" Label="V" ValueFormat="ValueFormat.Normal" />
-                            }
-                        </RadzenCard>
-                    </RadzenColumn>
-                    <RadzenColumn class="rz-p-5" Size="12" SizeLG="6">
-                        <RadzenCard Style="max-height: 450px; ">
-                            @if (devicedata.Count == 0)
-                            {
-                                <RadzenSkeleton Animation="SkeletonAnimation.Wave" />
-                            }
-                            else
-                            {
-                                <ParameterGraph Device=@Device DataParameterName="Resistance" Label="Ω" ValueFormat="ValueFormat.Normal" />
-                            }
-                        </RadzenCard>
-                    </RadzenColumn>
+                    <Server.Components.DeviceDataQuickViews.DDQV_MOUSE2 Device=@Device DeviceData=@devicedata/>
                     break;
                 case DeviceType.MOUSE2B:
+                    <Server.Components.DeviceDataQuickViews.DDQV_MOUSE2B Device=@Device DeviceData=@devicedata />
                     break;
                 case DeviceType.MOUSECOMBO:
-
+                    <Server.Components.DeviceDataQuickViews.DDQV_MOUSECOMBO Device=@Device DeviceData=@devicedata />
                     break;
                 case DeviceType.MAS2:
-
+                    <Server.Components.DeviceDataQuickViews.DDQV_MAS2 Device=@Device DeviceData=@devicedata />
                     break;
             }
         </RadzenRow>

@@ -69,7 +69,7 @@ namespace Server.Services
                         new WaitCallback(delegate (object state)
                         {
                             ManageIncomingDataAsync(senderID, senderName, deviceType, timestamp, parsedData);
-                            Console.WriteLine($"Received: [{timestamp}] ({senderName}({senderID})) {parsedData}");
+                            //Console.WriteLine($"Received: [{timestamp}] ({senderName}({senderID})) {parsedData}");
                         }), null);
 
 

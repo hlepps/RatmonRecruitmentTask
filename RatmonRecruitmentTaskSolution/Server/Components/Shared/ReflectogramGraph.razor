@@ -8,17 +8,19 @@
 @inject NavigationManager NavigationManager
 
 <RadzenRow class="rz-p-0 rz-p-md-6 rz-p-lg-12" JustifyContent="JustifyContent.Center">
-    <RadzenText TextStyle="TextStyle.H5">@DataParameterName</RadzenText>
+    <RadzenText TextStyle="TextStyle.H5">Reflectogram</RadzenText>
     <RadzenChart Style="width:100%">
         <RadzenChartTooltipOptions />
-        <RadzenLineSeries Smooth=false Data="@graphData" CategoryProperty="XValue" ValueProperty="YValue" Title=@DataParameterName>
-            <RadzenMarkers Visible=true MarkerType="MarkerType.Square" Size="3" />
+        <RadzenLineSeries Smooth=true Data="@graphData" CategoryProperty="XValue" ValueProperty="YValue" Title="Reflectogram">
+            <RadzenMarkers Visible=false />
             <RadzenSeriesDataLabels Visible=false />
         </RadzenLineSeries>
-        <RadzenCategoryAxis Padding="20" Formatter="@FormatDateTime"/>
-        <RadzenValueAxis Formatter="@FormatValue">
+        <RadzenCategoryAxis Visible=true Formatter="@FormatValue">
+            <RadzenAxisTitle Text="ns" />
+        </RadzenCategoryAxis>
+        <RadzenValueAxis Visible=true Formatter="@FormatValue">
             <RadzenGridLines Visible="true" />
-            <RadzenAxisTitle Text=@Label/>
+            <RadzenAxisTitle Text="V" />
         </RadzenValueAxis>
         <RadzenLegend Visible="false" />
     </RadzenChart>

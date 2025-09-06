@@ -1,0 +1,51 @@
+﻿@using Server.Components.Shared
+@using Server.Data.Models
+@using global::Shared
+
+<RadzenColumn class="rz-p-5" Size="12" SizeLG="6">
+    <RadzenCard Style="max-height: 450px; ">
+        @if (DeviceData.Count == 0)
+        {
+            <RadzenSkeleton Animation="SkeletonAnimation.Wave" />
+        }
+        else
+        {
+            <ParameterGraph Device=@Device DataParameterName="Voltage" Label="V" ValueFormat="ValueFormat.Normal" />
+        }
+    </RadzenCard>
+</RadzenColumn>
+<RadzenColumn class="rz-p-5" Size="12" SizeLG="6">
+    <RadzenCard Style="max-height: 450px; ">
+        @if (DeviceData.Count == 0)
+        {
+            <RadzenSkeleton Animation="SkeletonAnimation.Wave" />
+        }
+        else
+        {
+            <ParameterGraph Device=@Device DataParameterName="Resistance" Label="Ω" ValueFormat="ValueFormat.Normal" />
+        }
+    </RadzenCard>
+</RadzenColumn>
+
+<RadzenColumn class="rz-p-5" Size="12" SizeLG="6">
+    <RadzenCard Style="max-height: 450px; ">
+        <RadzenText TextStyle="TextStyle.DisplayH5">
+            Leak location:
+            @if (DeviceData.Count == 0)
+            {
+                <RadzenSkeleton Animation="SkeletonAnimation.Wave" />
+            }
+            else
+            {
+                @(string.Format("{0:0.00%}", (DeviceData[0].Data as DeviceData_MOUSE2B).LeakLocation))
+            }
+
+        </RadzenText>
+    </RadzenCard>
+</RadzenColumn>
+@code {
+    [Parameter]
+    public Device Device { get; set; }
+    [Parameter]
+    public List<DeviceData> DeviceData { get; set; }
+}
