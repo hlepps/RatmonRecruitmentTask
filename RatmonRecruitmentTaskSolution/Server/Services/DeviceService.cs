@@ -17,7 +17,7 @@ namespace Server.Services
             this.dbContextFactory = dbContextFactory;
             this.dataUpdateHubContext = dataUpdateHubContext;
         }
-        private async Task SendDataUpdateMessage()
+        private async Task SendDataUpdateMessageAsync()
         {
             await dataUpdateHubContext.Clients.All.SendAsync("UpdateData");
         }
@@ -26,7 +26,7 @@ namespace Server.Services
         /// Returns list of all registered devices
         /// </summary>
         /// <returns></returns>
-        public async Task<List<Device>> GetAllRegisteredDevices()
+        public async Task<List<Device>> GetAllRegisteredDevicesAsync()
         {
             using var appDbContext = dbContextFactory.CreateDbContext();
             return await appDbContext.RegisteredDevices.ToListAsync();
@@ -37,7 +37,7 @@ namespace Server.Services
         /// </summary>
         /// <param name="deviceId">Unique device id</param>
         /// <returns></returns>
-        public async Task<Device> GetDeviceById(string deviceId)
+        public async Task<Device> GetDeviceByIdAsync(string deviceId)
         {
             using var appDbContext = dbContextFactory.CreateDbContext();
             return await appDbContext.RegisteredDevices.SingleAsync(d => d.Id == deviceId);
@@ -48,7 +48,7 @@ namespace Server.Services
         /// </summary>
         /// <param name="deviceId">Unique device id</param>
         /// <returns></returns>
-        public async Task<bool> CheckIfDeviceIsRegistered(string deviceId)
+        public async Task<bool> CheckIfDeviceIsRegisteredAsync(string deviceId)
         {
             using var appDbContext = dbContextFactory.CreateDbContext();
             var amount = await appDbContext.RegisteredDevices.CountAsync(d => d.Id == deviceId);
@@ -62,12 +62,12 @@ namespace Server.Services
         /// <param name="Name">Device name</param>
         /// <param name="type">Device type</param>
         /// <returns></returns>
-        public async Task RegisterNewDevice(string deviceId, string Name, DeviceType type)
+        public async Task RegisterNewDeviceAsync(string deviceId, string Name, DeviceType type)
         {
             using var appDbContext = dbContextFactory.CreateDbContext();
             await appDbContext.RegisteredDevices.AddAsync(new Device { Id = deviceId, Name = Name, Type = type });
             await appDbContext.SaveChangesAsync();
-            await SendDataUpdateMessage();
+            await SendDataUpdateMessageAsync();
         }
 
         /// <summary>
@@ -76,12 +76,12 @@ namespace Server.Services
         /// <param name="deviceId">Unique device id</param>
         /// <param name="Name">Device name</param>
         /// <returns></returns>
-        public async Task UpdateDeviceName(string deviceId, string Name)
+        public async Task UpdateDeviceNameAsync(string deviceId, string Name)
         {
             using var appDbContext = dbContextFactory.CreateDbContext();
             appDbContext.RegisteredDevices.Single(d => d.Id == deviceId).Name = Name;
             await appDbContext.SaveChangesAsync();
-            await SendDataUpdateMessage();
+            await SendDataUpdateMessageAsync();
         }
     }
 }

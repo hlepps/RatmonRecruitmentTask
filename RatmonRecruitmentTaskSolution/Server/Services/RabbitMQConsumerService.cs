@@ -94,14 +94,13 @@ namespace Server.Services
 
         async void ManageIncomingDataAsync(string senderId, string senderName, DeviceType type, DateTime timestamp, DeviceDataBase data)
         {
-            if (await DeviceService.CheckIfDeviceIsRegistered(senderId))
+            if (await DeviceService.CheckIfDeviceIsRegisteredAsync(senderId))
             {
                 await DeviceDataService.SaveDeviceDataAsync(senderId, timestamp, data);
-                Console.WriteLine($"Saving from: {senderId}");
             }
             else
             {
-                await DeviceService.RegisterNewDevice(senderId, senderName, type);
+                await DeviceService.RegisterNewDeviceAsync(senderId, senderName, type);
             }
 
         }

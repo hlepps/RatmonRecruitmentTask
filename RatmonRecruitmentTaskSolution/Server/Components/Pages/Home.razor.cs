@@ -9,7 +9,7 @@ namespace Server.Components.Pages
         {
             base.OnInitializedAsync();
 
-            devices = await DeviceService.GetAllRegisteredDevices();
+            devices = await DeviceService.GetAllRegisteredDevicesAsync();
         }
     }
 }

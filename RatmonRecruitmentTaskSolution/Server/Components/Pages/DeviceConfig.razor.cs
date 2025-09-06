@@ -3,7 +3,7 @@ using Server.Data.Models;
 
 namespace Server.Components.Pages
 {
-    public partial class DeviceDetails
+    public partial class DeviceConfig
     {
         [Parameter]
         public string DeviceId { get; set; }

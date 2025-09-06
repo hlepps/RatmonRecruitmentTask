@@ -10,9 +10,13 @@
     <Authorized>
         <RadzenPanelMenuItem Text="Home" Icon="home" Path="" />
         <RadzenPanelMenuItem Text="Devices" Icon="device_hub">
-            @foreach(var device in devices)
+            @foreach (var device in devices)
             {
-                <RadzenPanelMenuItem Text="@(device.Name)" Icon="device_thermostat" Path="@($"/device/{device.Id}")" />
+                <RadzenPanelMenuItem Text="@(device.Name)" Icon="device_thermostat">
+                    <RadzenPanelMenuItem Text="@($"Data")" Icon="query_stats" Path="@($"/device/{device.Id}")"/>
+                    <RadzenPanelMenuItem Text="@($"Configure")" Icon="settings" Path="@($"/device/{device.Id}/config")"/>
+                </RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Disabled="true"/>
             }
         </RadzenPanelMenuItem>
         <RadzenPanelMenuItem Text="User Account" Icon="person" Path="Account/Manage" />

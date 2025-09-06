@@ -10,7 +10,7 @@
         }
         else
         {
-            <ParameterGraph Device=@Device DataParameterName="Voltage" Label="V" ValueFormat="ValueFormat.Normal" />
+            <ParameterGraph Device=@Device DataParameterName="Voltage" Label="V" ValueFormat="ValueFormat.Normal" Latest=@Latest DisableAutoUpdate=@DisableAutoUpdate />
         }
     </RadzenCard>
 </RadzenColumn>
@@ -22,7 +22,7 @@
         }
         else
         {
-            <ParameterGraph Device=@Device DataParameterName="Resistance" Label="Ω" ValueFormat="ValueFormat.Normal" />
+            <ParameterGraph Device=@Device DataParameterName="Resistance" Label="Ω" ValueFormat="ValueFormat.Normal" Latest=@Latest DisableAutoUpdate=@DisableAutoUpdate />
         }
     </RadzenCard>
 </RadzenColumn>
@@ -48,4 +48,8 @@
     public Device Device { get; set; }
     [Parameter]
     public List<DeviceData> DeviceData { get; set; }
+    [Parameter]
+    public int Latest { get; set; } = 10;
+    [Parameter]
+    public bool DisableAutoUpdate { get; set; } = false;
 }

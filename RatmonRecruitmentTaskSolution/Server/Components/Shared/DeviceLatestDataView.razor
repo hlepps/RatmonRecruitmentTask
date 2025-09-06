@@ -21,7 +21,7 @@
                     }
                     else
                     {
-                        @(devicedata[0].Timestamp.ToString("U"))
+                        @(devicedata[0].Timestamp.ToLocalTime().ToString("g"))
                     }
 
                 </RadzenText>

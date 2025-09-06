@@ -21,7 +21,7 @@ namespace Server.Components.Layout
         {
             base.OnInitializedAsync();
 
-            devices = await DeviceService.GetAllRegisteredDevices();
+            devices = await DeviceService.GetAllRegisteredDevicesAsync();
             //await InvokeAsync(StateHasChanged);
         }
 

@@ -36,6 +36,19 @@ namespace Server.Services
         }
 
         /// <summary>
+        /// Returns device data with timestamps between specified datetimes
+        /// </summary>
+        /// <param name="deviceId">Unique device id</param>
+        /// <param name="from">Start date</param>
+        /// <param name="to">End date</param>
+        /// <returns></returns>
+        public async Task<List<DeviceData>> GetLatestDeviceDataBetweenDatesAsync(string deviceId, DateTime from, DateTime to)
+        {
+            using var appDbContext = dbContextFactory.CreateDbContext();
+            return await appDbContext.DeviceData.Where(dd => dd.DeviceId == deviceId && dd.Timestamp >= from && dd.Timestamp <= to).OrderByDescending(dd => dd.Timestamp).Include(dd => dd.Data).ToListAsync();
+        }
+
+        /// <summary>
         /// Returns latest x entries (specified by amount) from device specified by deviceId
         /// </summary>
         /// <param name="deviceId">Unique device id</param>
@@ -44,10 +57,7 @@ namespace Server.Services
         public async Task<List<DeviceData>> GetLatestXDeviceDataAsync(string deviceId, int amount)
         {
             using var appDbContext = dbContextFactory.CreateDbContext();
-            var a = appDbContext.DeviceData.Where(dd => dd.DeviceId == deviceId);
-            var b = a.OrderByDescending(dd => dd.Timestamp);
-            var c = b.Take(amount).Include(dd => dd.Data);
-            return await c.ToListAsync();
+            return await appDbContext.DeviceData.Where(dd => dd.DeviceId == deviceId).OrderByDescending(dd => dd.Timestamp).Take(amount).Include(dd => dd.Data).ToListAsync();
         }
 
         /// <summary>

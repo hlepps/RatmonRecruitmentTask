@@ -40,6 +40,9 @@ namespace Server.Components.Shared
         [Parameter]
         public ValueFormat ValueFormat { get; set; }
 
+        [Parameter]
+        public bool DisableAutoUpdate { get; set; } = false;
+
         /// <summary>
         /// How many latest entries to select
         /// </summary>
@@ -53,7 +56,7 @@ namespace Server.Components.Shared
 
         string FormatDateTime(object value)
         {
-            return ((DateTime)value).ToLocalTime().ToString("T");
+            return ((DateTime)value).ToString("T");
         }
 
         string FormatValue(object value)
@@ -101,7 +104,7 @@ namespace Server.Components.Shared
 
             foreach (var single in devicedata)
             {
-                graphData.Add(new GraphData() { XValue = single.Timestamp, YValue = (double)type.GetProperty(DataParameterName).GetValue(single.Data) });
+                graphData.Add(new GraphData() { XValue = single.Timestamp.ToLocalTime(), YValue = (double)type.GetProperty(DataParameterName).GetValue(single.Data) });
             }
 
         }
@@ -134,8 +137,11 @@ namespace Server.Components.Shared
 
             hubConnection.On("UpdateData", async () =>
             {
-                await GetData();
-                await InvokeAsync(StateHasChanged);
+                if (!DisableAutoUpdate)
+                {
+                    await GetData();
+                    await InvokeAsync(StateHasChanged);
+                }
             });
 
             await hubConnection.StartAsync();
