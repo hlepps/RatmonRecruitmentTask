@@ -13,6 +13,7 @@
 @inject DeviceDataService DeviceDataService
 @inject RabbitMQDeviceConfigService RabbitMQDeviceConfigService
 @inject NotificationService NotificationService
+@inject DialogService DialogService
 
 @attribute [Authorize]
 
@@ -136,6 +137,13 @@ else
         <RadzenCard>
             <RadzenStack Orientation="Radzen.Orientation.Vertical">
                 <RadzenButton Icon="save" Click=@(args => SaveConfig())>Save</RadzenButton>
+            </RadzenStack>
+        </RadzenCard>
+    </RadzenColumn>
+    <RadzenColumn Size="12">
+        <RadzenCard>
+            <RadzenStack Orientation="Radzen.Orientation.Vertical">
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Click=@(args => RemoveDialog())>Delete device data</RadzenButton>
             </RadzenStack>
         </RadzenCard>
     </RadzenColumn>

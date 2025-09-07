@@ -1,5 +1,6 @@
 ﻿using DeviceBase;
 using Microsoft.AspNetCore.Components;
+using Radzen;
 using Radzen.Blazor;
 using Server.Data.Models;
 using Shared;
@@ -46,6 +47,26 @@ namespace Server.Components.Pages
             }
         }
 
+        private async Task RemoveDialog()
+        {
+            bool? result = await DialogService.Confirm(
+                    $"Are you sure to delete {currentDevice.Name} and all of its data? If the device is still sending data, it will be registered again.",
+                    "Confirm",
+                    new ConfirmOptions()
+                    {
+                        OkButtonText = "Yes",
+                        CancelButtonText = "No",
+                        CloseDialogOnOverlayClick = true,
+                        CloseDialogOnEsc = true,
+                    }
+                );
+
+            if (result == true)
+            {
+                await DeviceService.RemoveDeviceFromDatabase(currentDevice.Id);
+                NavigationManager.NavigateTo("/", true);
+            }
+        }
         async Task SaveConfig()
         {
             string serialized = "";

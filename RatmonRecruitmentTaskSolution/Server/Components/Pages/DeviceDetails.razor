@@ -10,6 +10,7 @@
 @inject NavigationManager NavigationManager
 @inject DeviceService DeviceService
 @inject DeviceDataService deviceDataService
+@inject DialogService DialogService
 
 @attribute [Authorize]
 
@@ -48,7 +49,7 @@ else
                 <RadzenColumn Size="12" SizeLG="6">
                     <RadzenStack Orientation="Radzen.Orientation.Vertical">
                         <RadzenLabel>To:</RadzenLabel>
-                        <RadzenDatePicker ValueChanged=@(async (DateTime dt) => await EndDateTimeChanged(dt)) Value=EndDate ShowTime="true" ShowSeconds="true" HoursStep="1" MinutesStep="5" SecondsStep="10" DateFormat="MM/dd/yyyy HH:mm" Name="End Date">
+                        <RadzenDatePicker ValueChanged=@(async (DateTime dt) => await EndDateTimeChanged(dt)) Value=@EndDate ShowTime="true" ShowSeconds="true" HoursStep="1" MinutesStep="5" SecondsStep="10" DateFormat="MM/dd/yyyy HH:mm" Name="End Date">
                             <FooterTemplate>
                                 <RadzenButton Click=@(async args => await EndDateTimeChanged(DateTime.Now)) Text="Now" Style="width: 100%;" class="rz-my-4" />
                             </FooterTemplate>

@@ -53,3 +53,7 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 /RatmonRecruitmentTaskSolution/.vs
+RatmonRecruitmentTaskSolution/DeviceSim/config1.json
+RatmonRecruitmentTaskSolution/DeviceSim/config2.json
+RatmonRecruitmentTaskSolution/DeviceSim/config3.json
+RatmonRecruitmentTaskSolution/DeviceSim/config4.json

@@ -25,7 +25,7 @@ namespace Server.Services
         /// <summary>
         /// Returns list of all registered devices
         /// </summary>
-        /// <returns></returns>
+        /// <returns>List of Device objects</returns>
         public async Task<List<Device>> GetAllRegisteredDevicesAsync()
         {
             using var appDbContext = dbContextFactory.CreateDbContext();
@@ -36,7 +36,7 @@ namespace Server.Services
         /// Returns registered Device object specified by deviceId
         /// </summary>
         /// <param name="deviceId">Unique device id</param>
-        /// <returns></returns>
+        /// <returns>Device object</returns>
         public async Task<Device> GetDeviceByIdAsync(string deviceId)
         {
             using var appDbContext = dbContextFactory.CreateDbContext();
@@ -82,6 +82,21 @@ namespace Server.Services
             appDbContext.RegisteredDevices.Single(d => d.Id == deviceId).Name = Name;
             await appDbContext.SaveChangesAsync();
             await SendDataUpdateMessageAsync();
+        }
+
+        /// <summary>
+        /// Removes device and all of its data from the database
+        /// </summary>
+        /// <param name="deviceId">Unique device Id</param>
+        /// <returns></returns>
+        public async Task RemoveDeviceFromDatabase(string deviceId)
+        {
+            using var appDbContext = dbContextFactory.CreateDbContext();
+            var data = appDbContext.DeviceData.Where(dd => dd.DeviceId == deviceId);
+            appDbContext.RemoveRange(await data.ToArrayAsync());
+            var dev = appDbContext.RegisteredDevices.Single(d => d.Id == deviceId);
+            appDbContext.Remove(dev);
+            await appDbContext.SaveChangesAsync();
         }
     }
 }
