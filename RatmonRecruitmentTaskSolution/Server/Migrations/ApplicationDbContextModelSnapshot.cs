@@ -232,7 +232,7 @@ namespace Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RegisteredDevices");
+                    b.ToTable("RegisteredDevices", (string)null);
                 });
 
             modelBuilder.Entity("Server.Data.Models.DeviceData", b =>
@@ -257,7 +257,7 @@ namespace Server.Migrations
 
                     b.HasIndex("DataId");
 
-                    b.ToTable("DeviceData");
+                    b.ToTable("DeviceData", (string)null);
                 });
 
             modelBuilder.Entity("Shared.DeviceDataBase", b =>
@@ -275,7 +275,7 @@ namespace Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DeviceDataBase");
+                    b.ToTable("DeviceDataBase", (string)null);
 
                     b.HasDiscriminator<string>("DeviceType").HasValue("DeviceDataBase");
 
@@ -321,7 +321,7 @@ namespace Server.Migrations
                     b.Property<double>("Voltage")
                         .HasColumnType("double precision");
 
-                    b.ToTable("DeviceDataBase", t =>
+                    b.ToTable("DeviceDataBase", null, t =>
                         {
                             t.Property("Resistance")
                                 .HasColumnName("DeviceData_MOUSE2B_Resistance");
@@ -347,7 +347,7 @@ namespace Server.Migrations
                     b.Property<double>("Voltage")
                         .HasColumnType("double precision");
 
-                    b.ToTable("DeviceDataBase", t =>
+                    b.ToTable("DeviceDataBase", null, t =>
                         {
                             t.Property("Resistance")
                                 .HasColumnName("DeviceData_MOUSECOMBO_Resistance");

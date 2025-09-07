@@ -31,4 +31,6 @@ namespace DeviceBase
         public double TemperatureThreshold { get; set; }
         public double HumidityThreshold { get; set; }
     }
+
+
 }

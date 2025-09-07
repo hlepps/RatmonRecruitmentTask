@@ -19,6 +19,11 @@ namespace DeviceSim
 
     internal class Program
     {
+        public static bool IsRunningInContainer()
+        {
+            return File.Exists("/.dockerenv");
+        }
+
         static void Main(string[] args)
         {
             DeviceType deviceType;

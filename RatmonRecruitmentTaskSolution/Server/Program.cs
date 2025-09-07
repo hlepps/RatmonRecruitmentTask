@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Radzen;
 using Server.Components;
 using Server.Components.Account;
@@ -74,14 +75,33 @@ namespace Server
                 options.Duration = TimeSpan.FromDays(365); // The duration of the cookie
             });
 
+            builder.Services.AddHostedService<Services.RabbitMQConsumerService>();
             builder.Services.AddSingleton<DeviceService>();
             builder.Services.AddSingleton<DeviceDataService>();
-            builder.Services.AddHostedService<Services.RabbitMQConsumerService>();
+            builder.Services.AddSingleton<RabbitMQDeviceConfigService>();
+            builder.Services.AddHostedService<RabbitMQDeviceConfigService>(p => p.GetRequiredService<RabbitMQDeviceConfigService>());
 
             builder.Services.AddSignalR();
 
 
             var app = builder.Build();
+
+            // Apply migrations on startup
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var context = services.GetRequiredService<ApplicationDbContext>(); // Your DbContext class
+                    context.Database.Migrate(); // Apply pending migrations
+                }
+                catch (Exception ex)
+                {
+                    // Log errors during migration
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while applying migrations.");
+                }
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

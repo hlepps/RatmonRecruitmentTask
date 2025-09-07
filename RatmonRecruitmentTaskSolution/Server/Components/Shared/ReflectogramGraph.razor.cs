@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Server.Data.Models;
-using Server.Migrations;
 using System;
 using System.Globalization;
 using System.Net.WebSockets;

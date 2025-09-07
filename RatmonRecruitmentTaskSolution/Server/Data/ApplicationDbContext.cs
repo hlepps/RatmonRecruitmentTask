@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -29,6 +30,7 @@ namespace Server.Data
             s => JsonSerializer.Deserialize<List<Reflectogram>>(s, JsonSerializerOptions.Default));
 
             modelBuilder.Entity<DeviceData_MOUSECOMBO>().Property(x => x.Reflectograms).HasConversion(reflectogramArrayValueConverter);
+
         }
     }
 }

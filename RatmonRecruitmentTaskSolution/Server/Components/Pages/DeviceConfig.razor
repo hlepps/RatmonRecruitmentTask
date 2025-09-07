@@ -1,4 +1,5 @@
-﻿@page "/device/{DeviceId}/config"
+﻿@page "/device/config/{DeviceId}"
+@using DeviceBase
 @using Microsoft.AspNetCore.Authorization
 @using Server.Components.Shared
 @using Server.Data.Models
@@ -9,7 +10,9 @@
 
 @inject NavigationManager NavigationManager
 @inject DeviceService DeviceService
-@inject DeviceDataService deviceDataService
+@inject DeviceDataService DeviceDataService
+@inject RabbitMQDeviceConfigService RabbitMQDeviceConfigService
+@inject NotificationService NotificationService
 
 @attribute [Authorize]
 
@@ -25,145 +28,115 @@ else
 
 <RadzenRow>
     <RadzenColumn Size="12">
-        <RadzenText TextStyle="TextStyle.DisplayH3">
-            @if (currentDevice == null)
-            {
-                <RadzenSkeleton />
-            }
-            else
-            {
-                @(currentDevice.Name)
-            }
-        </RadzenText>
-    </RadzenColumn>
-    <RadzenColumn Size="12">
         <RadzenCard>
             <RadzenRow>
-                <RadzenColumn Size="12" SizeLG="6">
+                <RadzenColumn Size="12" SizeLG="4">
                     <RadzenStack Orientation="Radzen.Orientation.Vertical">
-                        <RadzenLabel>From:</RadzenLabel>
-                        <RadzenDatePicker ValueChanged=@(async (DateTime dt) => await StartDateTimeChanged(dt)) Value=@StartDate ShowTime="true" ShowSeconds="true" HoursStep="1" MinutesStep="5" SecondsStep="10" DateFormat="MM/dd/yyyy HH:mm" Name="Start Date" />
+                        <RadzenLabel>Unique device id:</RadzenLabel>
+                        @if (currentDevice == null)
+                        {
+                            <RadzenSkeleton />
+                        }
+                        else
+                        {
+                            <RadzenTextBox @bind-Value=@currentDevice.Id Disabled=true></RadzenTextBox>
+                        }
                     </RadzenStack>
                 </RadzenColumn>
-                <RadzenColumn Size="12" SizeLG="6">
+                <RadzenColumn Size="12" SizeLG="4">
                     <RadzenStack Orientation="Radzen.Orientation.Vertical">
-                        <RadzenLabel>To:</RadzenLabel>
-                        <RadzenDatePicker ValueChanged=@(async (DateTime dt) => await EndDateTimeChanged(dt)) Value=EndDate ShowTime="true" ShowSeconds="true" HoursStep="1" MinutesStep="5" SecondsStep="10" DateFormat="MM/dd/yyyy HH:mm" Name="End Date">
-                            <FooterTemplate>
-                                <RadzenButton Click=@(async args => await EndDateTimeChanged(DateTime.Now)) Text="Now" Style="width: 100%;" class="rz-my-4" />
-                            </FooterTemplate>
-                        </RadzenDatePicker>
+                        <RadzenLabel>Device type:</RadzenLabel>
+                        @if (currentDevice == null)
+                        {
+                            <RadzenSkeleton />
+                        }
+                        else
+                        {
+                            <RadzenTextBox Value=@currentDevice.Type.ToString() Disabled=true></RadzenTextBox>
+                        }
+                    </RadzenStack>
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeLG="4">
+                    <RadzenStack Orientation="Radzen.Orientation.Vertical">
+                        <RadzenLabel>Device name:</RadzenLabel>
+                        @if (currentDevice == null || deviceConfig == null)
+                        {
+                            <RadzenSkeleton />
+                        }
+                        else
+                        {
+                            <RadzenTextBox @bind-Value=@deviceConfig.Name></RadzenTextBox>
+                        }
                     </RadzenStack>
                 </RadzenColumn>
             </RadzenRow>
         </RadzenCard>
     </RadzenColumn>
     <RadzenColumn Size="12">
-        @if (currentDevice == null)
+        @if (currentDevice == null || deviceConfig == null)
         {
             <RadzenSkeleton />
         }
         else
         {
-            @switch (currentDevice.Type)
-            {
-                case DeviceType.MOUSE2:
-                    <Server.Components.DeviceDataQuickViews.DDQV_MOUSE2 Device=@currentDevice DeviceData=@currentDeviceData Latest=@currentDeviceData.Count DisableAutoUpdate="true" />
-                    break;
-                case DeviceType.MOUSE2B:
-                    <Server.Components.DeviceDataQuickViews.DDQV_MOUSE2B Device=@currentDevice DeviceData=@currentDeviceData Latest=@currentDeviceData.Count DisableAutoUpdate="true" />
-                    break;
-                case DeviceType.MOUSECOMBO:
-                    <Server.Components.DeviceDataQuickViews.DDQV_MOUSECOMBO Device=@currentDevice DeviceData=@currentDeviceData Latest=@currentDeviceData.Count DisableAutoUpdate="true" />
-                    break;
-                case DeviceType.MAS2:
-                    <Server.Components.DeviceDataQuickViews.DDQV_MAS2 Device=@currentDevice DeviceData=@currentDeviceData Latest=@currentDeviceData.Count DisableAutoUpdate="true" />
-                    break;
-            }
-        }
-    </RadzenColumn>
-    <RadzenColumn Size="12">
-        @if (currentDevice is null)
-        {
-            <RadzenSkeleton />
-        }
-        else
-        {
-            <RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowVirtualization="true" AllowSorting="true" AllowAlternatingRows="false" AllowPaging="false" Style="height:1000px"
-                            Data="@currentDeviceData" ColumnWidth="300px" TItem="DeviceData">
-                <Columns>
-                    <RadzenDataGridColumn Property="@nameof(DeviceData.Id)" Title="id" Width="100px" />
-                    <RadzenDataGridColumn Property="@nameof(DeviceData.Timestamp)" Title="Timestamp" Sortable="true">
-                        <Template Context="data">
-                            @(data.Timestamp.ToLocalTime().ToString("G"))
-                        </Template>
-                    </RadzenDataGridColumn>
+            <RadzenCard>
+                <RadzenRow>
                     @switch (currentDevice.Type)
                     {
                         case DeviceType.MOUSE2:
-                            <RadzenDataGridColumn Property="@nameof(DeviceData_MOUSE2.Voltage)" Title="Voltage" Sortable="false" Filterable="false" TextAlign="TextAlign.Center">
-                                <Template Context="data">
-                                    @((data.Data as DeviceData_MOUSE2).Voltage)
-                                </Template>
-                            </RadzenDataGridColumn>
-                            <RadzenDataGridColumn Property="@nameof(DeviceData_MOUSE2.Resistance)" Title="Resistance" Sortable="false" Filterable="false" TextAlign="TextAlign.Center">
-                                <Template Context="data">
-                                    @((data.Data as DeviceData_MOUSE2).Resistance)
-                                </Template>
-                            </RadzenDataGridColumn>
+                            <RadzenColumn Size="12" SizeLG="6">
+                                <RadzenStack Orientation="Radzen.Orientation.Vertical">
+                                    <RadzenLabel>Alarm threshold:</RadzenLabel>
+                                    <RadzenNumeric @bind-Value=@((deviceConfig as Config_MOUSE2)!.AlarmThreshold)></RadzenNumeric>
+                                </RadzenStack>
+                            </RadzenColumn>
                             break;
                         case DeviceType.MOUSE2B:
-                            <RadzenDataGridColumn Property="@nameof(DeviceData_MOUSE2B.Voltage)" Title="Voltage" Sortable="false" Filterable="false" TextAlign="TextAlign.Center">
-                                <Template Context="data">
-                                    @((data.Data as DeviceData_MOUSE2B).Voltage)
-                                </Template>
-                            </RadzenDataGridColumn>
-                            <RadzenDataGridColumn Property="@nameof(DeviceData_MOUSE2B.Resistance)" Title="Resistance" Sortable="false" Filterable="false" TextAlign="TextAlign.Center">
-                                <Template Context="data">
-                                    @((data.Data as DeviceData_MOUSE2B).Resistance)
-                                </Template>
-                            </RadzenDataGridColumn>
-                            <RadzenDataGridColumn Property="@nameof(DeviceData_MOUSE2B.LeakLocation)" Title="Leak Location" Sortable="false" Filterable="false" TextAlign="TextAlign.Center">
-                                <Template Context="data">
-                                    @((data.Data as DeviceData_MOUSE2B).LeakLocation)
-                                </Template>
-                            </RadzenDataGridColumn>
+                            <RadzenColumn Size="12" SizeLG="6">
+                                <RadzenStack Orientation="Radzen.Orientation.Vertical">
+                                    <RadzenLabel>Alarm threshold:</RadzenLabel>
+                                    <RadzenNumeric @bind-Value=@((deviceConfig as Config_MOUSE2B)!.AlarmThreshold)></RadzenNumeric>
+                                </RadzenStack>
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeLG="6">
+                                <RadzenStack Orientation="Radzen.Orientation.Vertical">
+                                    <RadzenLabel>Cable length:</RadzenLabel>
+                                    <RadzenNumeric @bind-Value=@((deviceConfig as Config_MOUSE2B)!.CableLength)></RadzenNumeric>
+                                </RadzenStack>
+                            </RadzenColumn>
                             break;
                         case DeviceType.MOUSECOMBO:
-
-                            <RadzenDataGridColumn Property="@nameof(DeviceData_MOUSECOMBO.Voltage)" Title="Voltage" Sortable="false" Filterable="false" TextAlign="TextAlign.Center">
-                                <Template Context="data">
-                                    @((data.Data as DeviceData_MOUSECOMBO).Voltage)
-                                </Template>
-                            </RadzenDataGridColumn>
-                            <RadzenDataGridColumn Property="@nameof(DeviceData_MOUSECOMBO.Resistance)" Title="Resistance" Sortable="false" Filterable="false" TextAlign="TextAlign.Center">
-                                <Template Context="data">
-                                    @((data.Data as DeviceData_MOUSECOMBO).Resistance)
-                                </Template>
-                            </RadzenDataGridColumn>
-                            <RadzenDataGridColumn Property="@nameof(DeviceData_MOUSECOMBO.Reflectograms)" Title="Reflectogram" Sortable="false" Filterable="false" TextAlign="TextAlign.Center">
-                                <Template Context="data">
-                                    <RadzenTextArea Value=@(JsonSerializer.Serialize((data.Data as DeviceData_MOUSECOMBO).Reflectograms)) />
-
-                                </Template>
-                            </RadzenDataGridColumn>
+                            <RadzenColumn Size="12" SizeLG="6">
+                                <RadzenStack Orientation="Radzen.Orientation.Vertical">
+                                    <RadzenLabel>Alarm threshold:</RadzenLabel>
+                                    <RadzenNumeric @bind-Value=@((deviceConfig as Config_MOUSECOMBO)!.AlarmThreshold)></RadzenNumeric>
+                                </RadzenStack>
+                            </RadzenColumn>
                             break;
                         case DeviceType.MAS2:
-
-                            <RadzenDataGridColumn Property="@nameof(DeviceData_MAS2.Temperature)" Title="Temperature" Sortable="false" Filterable="false" TextAlign="TextAlign.Center">
-                                <Template Context="data">
-                                    @((data.Data as DeviceData_MAS2).Temperature)
-                                </Template>
-                            </RadzenDataGridColumn>
-                            <RadzenDataGridColumn Property="@nameof(DeviceData_MAS2.Humidity)" Title="Humidity" Sortable="false" Filterable="false" TextAlign="TextAlign.Center">
-                                <Template Context="data">
-                                    @((data.Data as DeviceData_MAS2).Humidity)
-                                </Template>
-                            </RadzenDataGridColumn>
+                            <RadzenColumn Size="12" SizeLG="6">
+                                <RadzenStack Orientation="Radzen.Orientation.Vertical">
+                                    <RadzenLabel>Temperature threshold:</RadzenLabel>
+                                    <RadzenNumeric @bind-Value=@((deviceConfig as Config_MAS2)!.TemperatureThreshold)></RadzenNumeric>
+                                </RadzenStack>
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeLG="6">
+                                <RadzenStack Orientation="Radzen.Orientation.Vertical">
+                                    <RadzenLabel>Humidity threshold:</RadzenLabel>
+                                    <RadzenNumeric @bind-Value=@((deviceConfig as Config_MAS2)!.HumidityThreshold)></RadzenNumeric>
+                                </RadzenStack>
+                            </RadzenColumn>
                             break;
                     }
-                </Columns>
-            </RadzenDataGrid>
+                </RadzenRow>
+            </RadzenCard>
         }
+    </RadzenColumn>
+    <RadzenColumn Size="12">
+        <RadzenCard>
+            <RadzenStack Orientation="Radzen.Orientation.Vertical">
+                <RadzenButton Icon="save" Click=@(args => SaveConfig())>Save</RadzenButton>
+            </RadzenStack>
+        </RadzenCard>
     </RadzenColumn>
 </RadzenRow>

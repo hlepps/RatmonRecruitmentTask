@@ -14,7 +14,7 @@
             {
                 <RadzenPanelMenuItem Text="@(device.Name)" Icon="device_thermostat">
                     <RadzenPanelMenuItem Text="@($"Data")" Icon="query_stats" Path="@($"/device/{device.Id}")"/>
-                    <RadzenPanelMenuItem Text="@($"Configure")" Icon="settings" Path="@($"/device/{device.Id}/config")"/>
+                    <RadzenPanelMenuItem Text="@($"Configure")" Icon="settings" Path="@($"/device/config/{device.Id}")"/>
                 </RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Disabled="true"/>
             }

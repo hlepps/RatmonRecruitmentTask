@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using DeviceBase;
+using Microsoft.AspNetCore.Components;
+using Radzen.Blazor;
 using Server.Data.Models;
+using Shared;
+using System.Text.Json;
 
 namespace Server.Components.Pages
 {
@@ -8,52 +12,76 @@ namespace Server.Components.Pages
         [Parameter]
         public string DeviceId { get; set; }
 
-        DateTime StartDate { get; set; } = DateTime.Now.AddHours(-1);
-        DateTime EndDate { get; set; } = DateTime.Now;
-
         Device currentDevice;
-        List<DeviceData> currentDeviceData = new List<DeviceData>();
+        Config deviceConfig;
 
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
 
-            await UpdateData();
         }
 
         protected override async Task OnParametersSetAsync()
         {
             await base.OnParametersSetAsync();
 
-            await UpdateData();
+            currentDevice = await DeviceService.GetDeviceByIdAsync(DeviceId);
+            var jsonConfig = await RabbitMQDeviceConfigService.CallAsync(RpcConfigMessageType.GET_CONFIG, "", currentDevice.Id);
+            
+            switch(currentDevice.Type)
+            {
+                case DeviceType.MOUSE2:
+                    deviceConfig = JsonSerializer.Deserialize<Config_MOUSE2>(jsonConfig)!;
+                    break;
+                case DeviceType.MOUSE2B:
+                    deviceConfig = JsonSerializer.Deserialize<Config_MOUSE2B>(jsonConfig)!;
+                    break;
+                case DeviceType.MOUSECOMBO:
+                    deviceConfig = JsonSerializer.Deserialize<Config_MOUSECOMBO>(jsonConfig)!;
+                    Console.WriteLine((deviceConfig as Config_MOUSECOMBO).AlarmThreshold);
+                    break;
+                case DeviceType.MAS2:
+                    deviceConfig = JsonSerializer.Deserialize<Config_MAS2>(jsonConfig)!;
+                    break;
+            }
         }
 
-        async Task StartDateTimeChanged(DateTime newDateTime)
+        async Task SaveConfig()
         {
-            StartDate = newDateTime;
-            currentDeviceData.Clear();
-            await InvokeAsync(StateHasChanged);
-            await UpdateData();
-        }
-        async Task EndDateTimeChanged(DateTime newDateTime)
-        {
-            EndDate = newDateTime;
-            currentDeviceData.Clear();
-            await InvokeAsync(StateHasChanged);
-            await UpdateData();
-        }
-        // quick fix to graph not updating data when there is the same amount of entries
-        bool syncCheck = false;
-        async Task UpdateData()
-        {
-            currentDevice = await DeviceService.GetDeviceByIdAsync(DeviceId);
-            currentDeviceData = await deviceDataService.GetLatestDeviceDataBetweenDatesAsync(DeviceId, StartDate.ToUniversalTime(), EndDate.ToUniversalTime());
-            if (currentDeviceData.Count != 0 && syncCheck)
+            string serialized = "";
+            switch (currentDevice.Type)
             {
-                //currentDeviceData.Add(currentDeviceData[0]);
+                case DeviceType.MOUSE2:
+                    serialized = JsonSerializer.Serialize(deviceConfig as Config_MOUSE2)!;
+                    break;
+                case DeviceType.MOUSE2B:
+                    serialized = JsonSerializer.Serialize(deviceConfig as Config_MOUSE2B)!;
+                    break;
+                case DeviceType.MOUSECOMBO:
+                    serialized = JsonSerializer.Serialize(deviceConfig as Config_MOUSECOMBO)!;
+                    break;
+                case DeviceType.MAS2:
+                    serialized = JsonSerializer.Serialize(deviceConfig as Config_MAS2)!;
+                    break;
             }
-            syncCheck = !syncCheck;
-            await InvokeAsync(StateHasChanged);
+
+
+            var response = await RabbitMQDeviceConfigService.CallAsync(RpcConfigMessageType.UPDATE_CONFIG, serialized, currentDevice.Id);
+
+            if(response == serialized)
+            {
+                NotificationService.Notify(new Radzen.NotificationMessage { Severity=Radzen.NotificationSeverity.Success, Summary="Success", Detail="Config successfully saved in device", Duration=4000});
+                if(deviceConfig.Name != currentDevice.Name)
+                {
+                    await DeviceService.UpdateDeviceNameAsync(currentDevice.Id, deviceConfig.Name);
+                    InvokeAsync(StateHasChanged);
+                }
+            }
+            else
+            {
+                NotificationService.Notify(new Radzen.NotificationMessage { Severity = Radzen.NotificationSeverity.Error, Summary = "Error", Detail = $"Could't save config. Message received from device: {response}", Duration = 4000 });
+            }
         }
+
     }
 }
